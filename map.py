@@ -1,8 +1,12 @@
+from character import Character
+from rogue import Rogue
+from skeleton import Skeleton
 import random
-
 import pygame
 from assets import GAME_ASSETS
 from enemy import Enemy
+from mage import Mage
+
 
 
 class Map:
@@ -27,14 +31,25 @@ class Map:
             Enemy(GAME_ASSETS["goblin"], [50, 50], self.window),
             Enemy(GAME_ASSETS["orc"], [self.window.get_width() - 120, 50], self.window),
             Enemy(GAME_ASSETS["skeleton"], [50, self.window.get_height() - 120], self.window),
-            Enemy(GAME_ASSETS["skeleton"], [self.window.get_width() - 120, self.window.get_height() - 120], self.window)
+            Skeleton(GAME_ASSETS["skeleton"], [self.window.get_width() - 120, self.window.get_height() - 120], self.window),
         ]
         self.in_combat = False  # Ensure this attribute is defined in the constructor
         self.current_enemy = None
         self.blue_orb = None
-        self.game_over = False
+        self.game_over = False      
+        self.special_hit_active = False  
+        self.clock = pygame.time.Clock()  # Pygame clock to manage time
 
-    def load_player(self, character_type):
+        self.special_button_rect = pygame.Rect(50, 700, 250, 50)
+        self.special_button_color = (0, 255, 0)
+        self.special_button_cooldown = 600  # 10 seconds at 60 FPS
+        self.special_button_timer = 0
+
+        # Initialize font
+        pygame.font.init()
+        self.font = pygame.font.SysFont('Consolas', 30)
+
+    def load_player(self, character_type, name = 'Player'):
         """
         Load the player character.
 
@@ -44,6 +59,13 @@ class Map:
         self.player_type = character_type
         self.player_image = self.player_images[character_type]
         self.player_image = pygame.transform.scale(self.player_image, (int(self.player_image.get_width() * 0.15), int(self.player_image.get_height() * 0.15)))
+
+        if character_type == 'Rogue':
+            self.player = Rogue(name)
+        if character_type == 'Mage':
+            self.player = Mage(name, self.window)
+
+
 
     def check_for_combat(self):
         """
@@ -58,13 +80,32 @@ class Map:
                 self.current_enemy = enemy
                 return True
         return False
+    
+    def health_bar(self):
+        max_health = 100
+        current_health = self.player.getHit_points()
+        
+        bar_length = 200  # Total length of the health bar
+        bar_height = 20  # Height of the health bar
+        
+        health_ratio = current_health / max_health
+        current_bar_length = bar_length * health_ratio
+        
+        red_colour = (255, 0, 0)
+        green_colour = (0, 255, 0)
+        white_colour = (255,255,255)
+        pygame.draw.rect(self.window, white_colour, (100-5, 100-5, bar_length+10, bar_height+10))
+        # Draw the red background bar (max health)
+        pygame.draw.rect(self.window, red_colour, (100, 100, bar_length, bar_height))
+        # Draw the green foreground bar (current health)
+        pygame.draw.rect(self.window, green_colour, (100, 100, current_bar_length, bar_height))
 
     def handle_combat(self):
         """
         Handle combat between the player and the current enemy.
         """
         if self.in_combat and self.current_enemy:
-            player_damage = random.randint(5, 10)
+            player_damage = random.randint(10, self.player.damage())
             enemy_defeated = self.current_enemy.take_damage(player_damage)
             print(f"Player attacks! Deals {player_damage} damage to the enemy.")
             if enemy_defeated:
@@ -76,9 +117,20 @@ class Map:
                     self.spawn_blue_orb()
             else:
                 enemy_damage = random.randint(5, 10)
+                self.player.take_damage(enemy_damage)
+                remaining_health = self.player.getHit_points()
                 print(f"Enemy attacks back! Deals {enemy_damage} damage to the player.")
+                print(f"Player remaining health {remaining_health}")
+                self.health_bar()
                 # Assume player has a method to take damage
                 # self.player.take_damage(enemy_damage)
+
+
+
+    def handle_special_hit(self):
+        if self.special_hit_active and isinstance(self.player, Mage):
+            self.player.position = self.player_position  # Update the player's position
+            self.player.special_hit(self.enemies)
 
     def spawn_blue_orb(self):
         """
@@ -102,14 +154,16 @@ class Map:
         return False
 
     def handle_events(self):
-        """
-        Handle user input events.
-        
-        Returns:
-            str: 'quit' if the game is over and should be exited, None otherwise.
-        """
         if self.game_over:
-            return 'quit'  # Stop processing events if game is over
+            return 'quit'
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return 'quit'
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if self.special_button_rect.collidepoint(event.pos):
+                    self.activate_special_hit()
+
 
         keys = pygame.key.get_pressed()
         move_speed = 2
@@ -121,24 +175,67 @@ class Map:
             self.player_position[1] -= move_speed
         if keys[pygame.K_DOWN]:
             self.player_position[1] += move_speed
+        if keys[pygame.K_SPACE]:
+            self.activate_special_hit()
+
+
 
         if not self.in_combat:
             if self.check_for_combat():
                 return
         self.handle_combat()
+        self.handle_special_hit()
 
         if self.blue_orb and self.check_orb_collision():
             return 'quit'
+        
+    def activate_special_hit(self):
+        if self.special_button_cooldown == 0:
+            self.special_hit_active = True
+            if isinstance(self.player, Mage):
+                self.player.activate_orbs()
+            self.special_button_cooldown = 600  # 10 seconds at 60 FPS
+
+    def update_special_button(self):
+        if self.special_button_cooldown > 0:
+            self.special_button_cooldown -= 1
+            self.special_button_timer = self.special_button_cooldown // 60
+            cooldown_ratio = self.special_button_cooldown / 600
+            red_value = int(255 * cooldown_ratio)
+            green_value = int(255 * (1 - cooldown_ratio))
+            self.special_button_color = (red_value, green_value, 0)
+       
+        else:
+            self.special_button_color = (0, 255, 0)
+            self.special_hit_active = True
+            if isinstance(self.player, Mage):
+                self.player.activate_orbs()
+
+    def draw_special_button(self):
+        pygame.draw.rect(self.window, self.special_button_color, self.special_button_rect)
+
+        if self.special_button_cooldown > 0:
+            text = str(self.special_button_timer).rjust(3)
+        else:
+            text = 'Special Ready'
+
+        text_surface = self.font.render(text, True, (0, 0, 0))
+        text_rect = text_surface.get_rect(center=self.special_button_rect.center)
+        self.window.blit(text_surface, text_rect)
 
     def draw(self):
-        """
-        Draw the game objects on the window.
-        """
         self.window.fill((0, 0, 0))
         self.window.blit(self.map_image, (0, 0))
         self.window.blit(self.player_image, (self.player_position[0], self.player_position[1]))
         for enemy in self.enemies:
+            enemy.move()
             enemy.draw()
+        self.health_bar()
         if self.blue_orb:
             self.window.blit(self.blue_orb, self.orb_position)
+        if self.special_hit_active:
+            self.handle_special_hit()
+
+        self.update_special_button()
+        self.draw_special_button()
         pygame.display.flip()

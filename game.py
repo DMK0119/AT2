@@ -8,12 +8,13 @@ class Game:
     def __init__(self):
         pygame.init()
         load_assets()  # load the game image assets
-        self.window = pygame.display.set_mode((800, 600))
+        self.window = pygame.display.set_mode((1100, 800))
         self.menu = MainMenu(self.window)  # Create an instance of the MainMenu class
         self.character_select = CharacterSelect(self.window)  # Create an instance of the CharacterSelect class
         self.game_map = Map(self.window)  # Create an instance of the Map class
         self.state = 'menu'  # Set the initial state to 'menu'
         self.current_character = None  # To store the chosen character
+        
 
     def run(self):
         while True:
@@ -24,7 +25,7 @@ class Game:
                 elif result == 'Settings':  # If the result is 'Settings'
                     pass  # Settings handling would go here
                 elif result == 'Exit':  # If the result is 'Exit'
-                    pygame.quit()  # Quit pygame
+                    pygame.quit()  # Quit pygame 
                     return  # Exit the run method
 
             elif self.state == 'character_select':  # If the state is 'character_select'

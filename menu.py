@@ -21,10 +21,14 @@ class MainMenu:
             # Display each menu option on the screen
             for index, option in enumerate(self.menu_options):
                 # Highlight the selected option in red
-                color = (255, 0, 0) if index == self.selected_option else (255, 255, 255)
+                color = (254, 252, 199) if index == self.selected_option else (241, 172, 101)
                 text = self.font.render(option, True, color)
                 # Adjust the positioning of the text to be centered horizontally and slightly offset vertically
-                text_rect = text.get_rect(center=(self.window.get_width() / 2, 150 + 50 * index))
+                text_rect = text.get_rect(center=(self.window.get_width() / 2, 500 + 50 * index))
+                #draw rectangle background behind each text
+                background_rect = pygame.Rect(text_rect.left-5, text_rect.top-3, text_rect.width +10, text_rect.height+5)
+                background_colour = (0,0,0)
+                pygame.draw.rect(self.window, background_colour, background_rect)
                 self.window.blit(text, text_rect)
 
             pygame.display.flip()  # Update the display with the new frame

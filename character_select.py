@@ -50,10 +50,10 @@ class CharacterSelect:
         num_buttons = len(self.characters)
         available_width = self.window.get_width() - total_spacing * (num_buttons + 1)
         button_width = available_width // num_buttons
-        max_height = self.window.get_height() // 4  # maximum button height
+        max_height = self.window.get_height() // 2  # maximum button height
 
         x = total_spacing
-        y = self.window.get_height() // 3 - max_height // 2  # position them a bit higher to make space for back button
+        y = self.window.get_height() // 3 - max_height // 4  # position them a bit higher to make space for back button
 
         for character, image in self.characters.items():
             aspect_ratio = image.get_height() / image.get_width()
@@ -77,6 +77,16 @@ class CharacterSelect:
             back_text = self.font.render('Back', True, (0, 0, 0))
             text_rect = back_text.get_rect(center=self.back_button.center)
             self.window.blit(back_text, text_rect)
+
+            # text for choosing character
+            text_colour = (254, 252, 199)
+            text = self.font.render("Choose your character", True, text_colour)
+            text_rect = text.get_rect(center=(self.window.get_width() / 2, 100))
+            # draw rectangle background behind each text
+            background_rect = pygame.Rect(text_rect.left - 5, text_rect.top - 3, text_rect.width + 10, text_rect.height + 5)
+            background_colour = (0, 0, 0)
+            pygame.draw.rect(self.window, background_colour, background_rect)
+            self.window.blit(text, text_rect)
 
             pygame.display.flip()
 
