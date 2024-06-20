@@ -16,7 +16,7 @@ class Map:
 
         Args:
             window (pygame.Surface): The game window surface.
-        """
+            """
         self.window = window
         self.map_image = pygame.image.load(GAME_ASSETS["dungeon_map"]).convert_alpha()
         self.map_image = pygame.transform.scale(self.map_image, (self.window.get_width(), self.window.get_height()))
@@ -36,6 +36,7 @@ class Map:
         self.in_combat = False  # Ensure this attribute is defined in the constructor
         self.current_enemy = None
         self.blue_orb = None
+        self.world = 0
         self.game_over = False      
         self.special_hit_active = False  
         self.clock = pygame.time.Clock()  # Pygame clock to manage time
@@ -48,6 +49,16 @@ class Map:
         # Initialize font
         pygame.font.init()
         self.font = pygame.font.SysFont('Consolas', 30)
+
+        '''self.window_width = self.window.get_width()
+        self.window_height = self.window.get_height()
+        
+        self.boss_incoming_image = pygame.image.load("./assets/BossIncoming.png").convert_alpha()
+        self.boss_incoming_image = pygame.transform.scale(self.boss_incoming_image, (self.window_width, self.window_height))
+        
+        self.boss_map_image = pygame.image.load("./assets/boss_map.jpeg").convert_alpha()
+        self.boss_map_image = pygame.transform.scale(self.boss_map_image, (self.window_width, self.window_height))'''
+
 
     def load_player(self, character_type, name = 'Player'):
         """
@@ -80,7 +91,7 @@ class Map:
                 self.current_enemy = enemy
                 return True
         return False
-    
+
     def health_bar(self):
         max_health = 100
         current_health = self.player.getHit_points()
@@ -148,14 +159,11 @@ class Map:
             bool: True if the player has collided with the blue orb, False otherwise.
         """
         if self.blue_orb and pygame.math.Vector2(self.orb_position).distance_to(self.player_position) < 25:
-            self.game_over = True
             print("YOU WIN")  # This can be modified to a more visual display if needed.
             return True
         return False
 
     def handle_events(self):
-        if self.game_over:
-            return 'quit'
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -187,7 +195,16 @@ class Map:
         self.handle_special_hit()
 
         if self.blue_orb and self.check_orb_collision():
-            return 'quit'
+            print("BOSS INCOMING")
+            
+        '''self.window.blit(self.boss_incoming_image, (0, 0))
+            pygame.display.flip()
+            pygame.time.wait(5000) # Display for 5 seconds
+            
+            self.window.blit(self.boss_map_image, (0, 0))
+            pygame.display.flip()
+            self.blue_orb = None ''' # Optionally reset the orb to prevent repeated calls
+        
         
     def activate_special_hit(self):
         if self.special_button_cooldown == 0:
@@ -204,7 +221,7 @@ class Map:
             red_value = int(255 * cooldown_ratio)
             green_value = int(255 * (1 - cooldown_ratio))
             self.special_button_color = (red_value, green_value, 0)
-       
+    
         else:
             self.special_button_color = (0, 255, 0)
             self.special_hit_active = True
