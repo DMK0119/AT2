@@ -7,7 +7,7 @@ from assets import GAME_ASSETS
 from enemy import Enemy
 from mage import Mage
 
-
+# test
 
 class Map:
     def __init__(self, window):
