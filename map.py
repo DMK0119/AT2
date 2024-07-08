@@ -164,7 +164,6 @@ class Map:
         return False
 
     def handle_events(self):
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return 'quit'
@@ -172,20 +171,18 @@ class Map:
                 if self.special_button_rect.collidepoint(event.pos):
                     self.activate_special_hit()
 
-
         keys = pygame.key.get_pressed()
         move_speed = 2
-        if keys[pygame.K_LEFT]:
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             self.player_position[0] -= move_speed
-        if keys[pygame.K_RIGHT]:
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             self.player_position[0] += move_speed
-        if keys[pygame.K_UP]:
+        if keys[pygame.K_UP] or keys[pygame.K_w]:
             self.player_position[1] -= move_speed
-        if keys[pygame.K_DOWN]:
+        if keys[pygame.K_DOWN] or keys[pygame.K_s]:
             self.player_position[1] += move_speed
         if keys[pygame.K_SPACE]:
             self.activate_special_hit()
-
 
 
         if not self.in_combat:
@@ -196,6 +193,9 @@ class Map:
 
         if self.blue_orb and self.check_orb_collision():
             print("BOSS INCOMING")
+            return 'Level2'
+
+        return None
             
         '''self.window.blit(self.boss_incoming_image, (0, 0))
             pygame.display.flip()

@@ -2,6 +2,7 @@ import pygame
 from menu import MainMenu
 from character_select import CharacterSelect
 from map import Map
+from TurnBaseBoss import TurnBase
 from assets import load_assets, GAME_ASSETS
 
 class Game:
@@ -14,8 +15,8 @@ class Game:
         self.game_map = Map(self.window)  # Create an instance of the Map class
         self.state = 'menu'  # Set the initial state to 'menu'
         self.current_character = None  # To store the chosen character
+        self.Level2 = TurnBase(self.window)
         
-
     def run(self):
         while True:
             if self.state == 'menu':  # If the state is 'menu'
@@ -44,8 +45,14 @@ class Game:
                 elif result == 'quit':  # If the result is 'quit'
                     pygame.quit()  # Quit pygame
                     return  # Exit the run method
-                else:
-                    self.game_map.draw()  # Draw the game map
+                elif result == 'Level2':
+                    self.state = 'Level2'  # Transition to Level2
+
+                self.game_map.draw()  # Draw the game map
+
+            elif self.state == 'Level2':
+                self.Level2.run()  # Run the next level
+                self.state = 'menu'  # For now, return to the menu after Level2 (you can change this behavior as needed)
 
             for event in pygame.event.get():  # Iterate over the events in the event queue
                 if event.type == pygame.QUIT:  # If the event type is QUIT

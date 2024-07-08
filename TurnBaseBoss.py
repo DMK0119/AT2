@@ -1,80 +1,36 @@
 import pygame
-import random
 
-# Initialize Pygame
-pygame.init()
+class TurnBase:
+    def __init__(self, window):
+        self.window = window
+        self.window_width = self.window.get_width()
+        self.window_height = self.window.get_height()
+        self.map_level2 = pygame.image.load("./assets/boss_map.jpeg").convert_alpha()
+        self.map_level2 = pygame.transform.scale(self.map_level2, (self.window.get_width(), self.window.get_height()))
+        self.boss_incoming_image = pygame.image.load("./assets/BossIncoming.png").convert_alpha()
+        self.boss_incoming_image = pygame.transform.scale(self.boss_incoming_image, (self.window.get_width(), self.window.get_height()))
 
-# Set up the game window
-window_width, window_height = 800, 600
-window = pygame.display.set_mode((window_width, window_height))
-pygame.display.set_caption("Turn-Based Game")
+    def run(self):
+        running = True
 
-# Define colors
-black = (0, 0, 0)
-white = (255, 255, 255)
-gold = (255, 215, 0)
+        # Display the boss incoming image for 5 seconds
+        self.window.blit(self.boss_incoming_image, (0, 0))
+        pygame.display.flip()
+        pygame.time.wait(3000)  # Wait for 5 seconds
 
-# Define fonts
-font = pygame.font.SysFont('Consolas', 30)
+        # Switch to the boss map image
+        self.window.blit(self.map_level2, (0, 0))
+        pygame.display.flip()
 
-# Button class
-class Button:
-    def __init__(self, text, pos, size):
-        self.text = text
-        self.pos = pos
-        self.size = size
-        self.rect = pygame.Rect(pos, size)
-        self.color = gold
+        while running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    return 'quit'
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                    return 'menu'
 
-    def draw(self, window):
-        pygame.draw.rect(window, self.color, self.rect)
-        text_surface = font.render(self.text, True, black)
-        text_rect = text_surface.get_rect(center=self.rect.center)
-        window.blit(text_surface, text_rect)
+            # Any additional game logic for the boss map can go here
 
-    def is_clicked(self, pos):
-        return self.rect.collidepoint(pos)
+            pygame.display.flip()
 
-# Define player and enemy actions
-actions = ["attack", "heal", "level up", "special ability"]
-
-# Initialize turn variable
-turn = 0
-
-# Create buttons
-buttons = [
-    Button("Attack", (50, 500, 150, 50)),
-    Button("Heal", (250, 500, 150, 50)),
-    Button("Level Up", (450, 500, 150, 50)),
-    Button("Special Ability", (650, 500, 150, 50))
-]
-
-# Main game loop
-running = True
-while running:
-    window.fill(white)
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            pos = event.pos
-            for button in buttons:
-                if button.is_clicked(pos) and turn % 2 == 0:
-                    print(f"Player uses {button.text}")
-                    turn += 1
-
-    # Enemy turn
-    if turn % 2 == 1:
-        action = random.choice(actions)
-        print(f"Enemy uses {action}")
-        turn += 1
-
-    # Draw buttons
-    for button in buttons:
-        button.draw(window)
-
-    pygame.display.flip()
-    pygame.time.wait(100)  # Small delay to make it easier to see the turns change
-
-pygame.quit()
+        return 'menu'
