@@ -1,5 +1,6 @@
 from character import Character
 from rogue import Rogue
+from warrior import Warrior
 from skeleton import Skeleton
 import random
 import pygame
@@ -72,9 +73,11 @@ class Map:
         self.player_image = pygame.transform.scale(self.player_image, (int(self.player_image.get_width() * 0.15), int(self.player_image.get_height() * 0.15)))
 
         if character_type == 'Rogue':
-            self.player = Rogue(name)
+            self.player = Rogue(name, self.window)
         if character_type == 'Mage':
             self.player = Mage(name, self.window)
+        if character_type == 'Warrior':
+            self.player = Warrior(name, self.window)
 
 
 
