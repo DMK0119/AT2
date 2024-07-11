@@ -99,6 +99,7 @@ class CharacterSelect:
                         return 'back'
                     for character, (image, rect) in self.character_buttons.items():
                         if rect.collidepoint(event.pos):
+                            print(character)
                             return character
 
         return None

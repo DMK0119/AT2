@@ -15,7 +15,7 @@ class Game:
         self.game_map = Map(self.window)  # Create an instance of the Map class
         self.state = 'menu'  # Set the initial state to 'menu'
         self.current_character = None  # To store the chosen character
-        self.Level2 = TurnBase(self.window)
+        self.Level2 = None  # Initialize Level2 as None
         
     def run(self):
         while True:
@@ -36,6 +36,7 @@ class Game:
                 elif selected_character:  # If a character is selected
                     self.current_character = selected_character  # Set the current character to the selected character
                     self.game_map.load_player(selected_character)  # Load the selected character into the game map
+                    self.Level2 = TurnBase(self.window, self.current_character)  # Initialize TurnBase with the selected character
                     self.state = 'game_map'  # Change the state to 'game_map'
 
             elif self.state == 'game_map':  # If the state is 'game_map'
