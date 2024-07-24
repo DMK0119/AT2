@@ -2,11 +2,11 @@ import pygame
 import random
 
 class Enemy:
-    def __init__(self,image_path, position, window):
+    def __init__(self, image_path, position, window):
         # Load the enemy image from the specified image path
         self.image = pygame.image.load(image_path).convert_alpha()
-        # Scale the enemy image to 0.75 times the original size
-        self.image = pygame.transform.scale(self.image, (int(self.image.get_width() * 0.75), int(self.image.get_height() * 0.75)))
+        # Scale the enemy image to 0.5 times the original size
+        self.image = pygame.transform.scale(self.image, (int(self.image.get_width() * 0.4), int(self.image.get_height() * 0.4)))
         # Set the initial position of the enemy
         self.position = position
         # Set the window where the enemy will be drawn
@@ -20,6 +20,9 @@ class Enemy:
         self.health -= damage
         return self.health <= 0
         # Return True if the enemy's health is less than or equal to 0, indicating that it is defeated
+    
+    def getHealth(self):
+        return self.health
 
     def draw_health_bar(self):
         max_health = 100
