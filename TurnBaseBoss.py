@@ -1,7 +1,7 @@
 import pygame
 import random
-from character_select import CharacterSelect
 from mage import Mage
+from character import Character
 
 class TurnBase:
     def __init__(self, window, character_type):
