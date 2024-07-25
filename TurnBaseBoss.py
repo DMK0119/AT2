@@ -215,7 +215,7 @@ class TurnBase:
 
         pygame.draw.rect(self.window, (255, 255, 255), (button_x, button_y, button_width, button_height))
         pygame.draw.rect(self.window, (0, 0, 0), (button_x, button_y, button_width, button_height), 2)
-        text = self.font.render("Quit Game", True, (0, 0, 0))
+        text = self.font.render("Restart Round", True, (0, 0, 0))
         text_rect = text.get_rect(center=(button_x + button_width // 2, button_y + button_height // 2))
         self.window.blit(text, text_rect)
         pygame.display.flip()
