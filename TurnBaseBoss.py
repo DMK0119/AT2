@@ -171,10 +171,10 @@ class TurnBase:
         if action == "Heal":
             self.health = min(self.max_health, self.health + 15)
         elif action == "Attack":
-            self.enemy_health = max(0, self.enemy_health - 100)
+            self.enemy_health = max(0, self.enemy_health - 20)
             self.player_attack_count = min(3, self.player_attack_count + 1)  # Increment attack count
         elif action == "Special" and self.player_attack_count >= 3:
-            self.enemy_health = max(0, self.enemy_health - 50)
+            self.enemy_health = max(0, self.enemy_health - 40)
             self.player_attack_count = 0  # Reset the attack count after using Special
         elif action == "Shield":
             self.shield_active = True  # Activate shield
@@ -188,7 +188,7 @@ class TurnBase:
             self.enemy_health = min(100, self.enemy_health + 10)
             self.action_text = "Enemy turn: Heal - gains 10 health"
         elif action == "Attack":
-            damage = 10000 if self.enemy_special_counter < 5 else 40
+            damage = 30 if self.enemy_special_counter < 5 else 20
             if self.shield_active:
                 damage = max(0, damage - 10)  # Reduce damage if shield is active
                 self.shield_active = False  # Deactivate shield after absorbing damage
@@ -391,7 +391,7 @@ class TurnBase:
                 if self.round == 1:
                     self.window.blit(self.enemy_image, (800, self.header_height + 50))
                 elif self.round == 2:
-                    self.window.blit(self.enemy_image, (550, self.header_height + 30))
+                    self.window.blit(self.enemy_image, (550, self.header_height + 20))
                 elif self.round == 3:
                     self.window.blit(self.enemy_image, (570, self.header_height + 80))
 
