@@ -32,6 +32,15 @@ class Mage(Character):
             {"angle": math.pi, "radius": 50, "damage": self.orb_damage, "position": (center[0] - 50, center[1])}
         ]
 
+    def init_upgraded_orbs(self):
+        # Create three orbs with initial angles and positions
+        center = self.position
+        return [
+            {"angle": 0, "radius": 50, "damage": self.orb_damage, "position": (center[0] + 50, center[1])},
+            {"angle": 2 * math.pi / 3, "radius": 50, "damage": self.orb_damage, "position": (center[0] - 25, center[1] + 43)},
+            {"angle": 4 * math.pi / 3, "radius": 50, "damage": self.orb_damage, "position": (center[0] - 25, center[1] - 43)}
+        ]
+
     def update_orbs(self):
         for orb in self.orbs:
             orb["angle"] += self.orb_rotation_speed
@@ -99,5 +108,7 @@ class Mage(Character):
             self.player_attack_count = 0  # Reset player attack count to avoid instant special attack
             self.damage_bonus = 20
         elif effect == "Special Upgrade":
-            self.orb_image = pygame.image.load('./assets/magic_orb2.png').convert_alpha()
-            self.orb_image = pygame.transform.scale(self.orb_image, (40, 40))  # Resize the upgraded orb image
+            self.orb_image = pygame.transform.scale(self.orb_image, (60, 60))  # Resize the upgraded orb image
+            # Initialize the upgraded orbs
+            self.orbs = self.init_upgraded_orbs()
+            self.orbs_active = True

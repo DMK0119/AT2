@@ -314,7 +314,8 @@ class TurnBase:
             self.player_attack_count = 0  # Reset player attack count to avoid instant special attack
             self.damage_bonus = 20
         elif effect == "Special Upgrade":
-            Mage.special_upgrade('Special Upgrade')
+            if isinstance(self.character_type, Mage):
+                self.character_type.special_upgrade('Special Upgrade')
 
     def end_round(self):
         return self.round
