@@ -2,22 +2,6 @@ import pygame
 from assets import GAME_ASSETS
 
 class CharacterSelect:
-    """
-    A class representing the character selection screen.
-
-    Attributes:
-        window (pygame.Surface): The game window surface.
-        font (pygame.font.Font): The font used for text rendering.
-        background_image (pygame.Surface): The background image of the character selection screen.
-        characters (dict): A dictionary mapping character names to their corresponding button images.
-        character_buttons (dict): A dictionary mapping character names to their button rectangles.
-        back_button (pygame.Rect): The rectangle representing the back button.
-
-    Methods:
-        __init__(self, window): Initializes the CharacterSelect object.
-        setup_character_buttons(self): Sets up the character buttons.
-        run(self): Runs the character selection screen loop.
-    """
 
     def __init__(self, window):
         """
