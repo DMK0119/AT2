@@ -10,8 +10,7 @@ class TurnBase:
         self.window_height = self.window.get_height()
         self.header_height = self.window_height // 6
         self.footer_height = self.window_height // 5  # Footer banner height
-        self.map_level2 = pygame.image.load("./assets/boss_map.jpeg").convert_alpha()
-        self.map_level2 = pygame.transform.scale(self.map_level2, (self.window.get_width(), self.window.get_height()))
+        self.map_level2 = None
         self.boss_incoming_image = pygame.image.load("./assets/BossIncoming.png").convert_alpha()
         self.boss_incoming_image = pygame.transform.scale(self.boss_incoming_image, (self.window.get_width(), self.window.get_height()))
         self.enemy_image = pygame.image.load("./assets/level2_enemy.png").convert_alpha()
@@ -68,7 +67,19 @@ class TurnBase:
         self.turn = "player"
         self.action_text = ""
         self.shield_active = False
-        self.round = 1
+        self.round += 1
+
+    def next_round(self):
+        if self.round == 2:
+            self.map_level2 = pygame.image.load('./assets/boss_map.jpeg').convert_alpha()
+            self.map_level2 = pygame.transform.scale(self.map_level2, (self.window.get_width(), self.window.get_height()))
+        elif self.round == 3:
+            self.map_level2 = pygame.image.load('./assets/level2.png').convert_alpha()
+            self.map_level2 = pygame.transform.scale(self.map_level2, (self.window.get_width(), self.window.get_height()))
+        elif self.round == 4:
+            self.map_level2 = pygame.image.load('./assets/level3.png').convert_alpha()
+            self.map_level2 = pygame.transform.scale(self.map_level2, (self.window.get_width(), self.window.get_height()))
+
 
     def draw_health_bar(self, x, y, health, max_health, character_name, bar_color):
         bar_width = 300
@@ -307,6 +318,7 @@ class TurnBase:
 
     def run(self):
         self.reset()
+        self.next_round()
         if self.enemy_health != 0:
             running = True
         else:
