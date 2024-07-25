@@ -57,7 +57,7 @@ class TurnBase:
         self.action_text = ""  # Text to display the current action
         self.shield_active = False  # Shield state
 
-        self.round = 1
+        self.round = 0
     
     def reset(self):
         self.health = self.max_health
@@ -68,17 +68,22 @@ class TurnBase:
         self.action_text = ""
         self.shield_active = False
         self.round += 1
+        print(self.round)
 
     def next_round(self):
-        if self.round == 2:
+        if self.round == 1:
             self.map_level2 = pygame.image.load('./assets/boss_map.jpeg').convert_alpha()
             self.map_level2 = pygame.transform.scale(self.map_level2, (self.window.get_width(), self.window.get_height()))
-        elif self.round == 3:
+        elif self.round == 2:
             self.map_level2 = pygame.image.load('./assets/level2.png').convert_alpha()
             self.map_level2 = pygame.transform.scale(self.map_level2, (self.window.get_width(), self.window.get_height()))
-        elif self.round == 4:
+            self.enemy_image = pygame.image.load("./assets/boss2.png").convert_alpha()
+            self.enemy_image = pygame.transform.scale(self.enemy_image, (self.enemy_image.get_width(), self.enemy_image.get_height()))
+        elif self.round == 3:
             self.map_level2 = pygame.image.load('./assets/level3.png').convert_alpha()
             self.map_level2 = pygame.transform.scale(self.map_level2, (self.window.get_width(), self.window.get_height()))
+            self.enemy_image = pygame.image.load("./assets/boss3.png").convert_alpha()
+            self.enemy_image = pygame.transform.scale(self.enemy_image, (self.enemy_image.get_width()//1.5, self.enemy_image.get_height()//1.5))
 
 
     def draw_health_bar(self, x, y, health, max_health, character_name, bar_color):
@@ -312,7 +317,6 @@ class TurnBase:
             Mage.special_upgrade('Special Upgrade')
 
     def end_round(self):
-        self.round += 1
         return self.round
 
 
@@ -353,7 +357,6 @@ class TurnBase:
                                     self.handle_player_action(action)
                                     if self.enemy_health == 0:
                                         self.display_boss_defeated()
-                                        self.reset()
                                         self.end_round()
                                         running = False
                                         return 'game_map'
@@ -385,7 +388,12 @@ class TurnBase:
                 self.window.blit(self.player_image, (100, self.header_height))
                 if self.shield_active:
                     self.window.blit(self.shield_image, (100, self.header_height))
-                self.window.blit(self.enemy_image, (800, self.header_height + 50))
+                if self.round == 1:
+                    self.window.blit(self.enemy_image, (800, self.header_height + 50))
+                elif self.round == 2:
+                    self.window.blit(self.enemy_image, (550, self.header_height + 30))
+                elif self.round == 3:
+                    self.window.blit(self.enemy_image, (570, self.header_height + 80))
 
             # Draw footer banner
             self.window.blit(self.footer, (0, self.window_height - self.footer.get_height() * 0.9))
