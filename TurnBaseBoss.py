@@ -171,7 +171,7 @@ class TurnBase:
         if action == "Heal":
             self.health = min(self.max_health, self.health + 30)
         elif action == "Attack":
-            self.enemy_health = max(0, self.enemy_health - -20)
+            self.enemy_health = max(0, self.enemy_health - 20)
             self.player_attack_count = min(3, self.player_attack_count + 1)  # Increment attack count
         elif action == "Special" and self.player_attack_count >= 3:
             self.enemy_health = max(0, self.enemy_health - 40)
