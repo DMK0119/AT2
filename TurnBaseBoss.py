@@ -169,9 +169,9 @@ class TurnBase:
 
     def handle_player_action(self, action):
         if action == "Heal":
-            self.health = min(self.max_health, self.health + 15)
+            self.health = min(self.max_health, self.health + 30)
         elif action == "Attack":
-            self.enemy_health = max(0, self.enemy_health - 20)
+            self.enemy_health = max(0, self.enemy_health - -20)
             self.player_attack_count = min(3, self.player_attack_count + 1)  # Increment attack count
         elif action == "Special" and self.player_attack_count >= 3:
             self.enemy_health = max(0, self.enemy_health - 40)
@@ -190,7 +190,7 @@ class TurnBase:
         elif action == "Attack":
             damage = 30 if self.enemy_special_counter < 5 else 20
             if self.shield_active:
-                damage = max(0, damage - 10)  # Reduce damage if shield is active
+                damage = max(0, damage - 20)  # Reduce damage if shield is active
                 self.shield_active = False  # Deactivate shield after absorbing damage
             self.health = max(0, self.health - damage)
             self.enemy_special_counter = (self.enemy_special_counter + 1) % 5
